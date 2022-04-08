@@ -1,9 +1,8 @@
-// DELETE THIS LINE
-var selectAll = () => {};
+// DELETE THIS LINEvar selectAll = () => {};
 
 // UNCOMMENT THE DATABASE YOU'D LIKE TO USE
 // var db = require("../database-mysql");
-// var Item = require('../database-mongo/Item.model.js');
+var Todo = require('../database-mongo/Item.model.js');
 
 // UNCOMMENT IF USING MYSQL WITH CALLBACKS
 // var selectAll = function (req, res) {
@@ -36,5 +35,44 @@ var selectAll = () => {};
 //     res.status(200).send(error);
 //   }
 // };
+var getAllTodos =   async (req,res) => {
+    const todos = await Todo.find();
 
-module.exports = { selectAll };
+	res.json(todos);
+} ; 
+
+var createTodo = async (req, res) => {
+    const todo = new Todo({
+		text: req.body.text
+	})
+
+	todo.save();
+
+	res.json(todo);
+};
+
+var deleteTodo = async (req, res) => {
+    const result = await Todo.findByIdAndDelete(req.params.id);
+
+	res.json({result});
+};
+var updateTodo = async (req, res) => {
+    const todo = await Todo.findById(req.params.id);
+
+	todo.text = req.body.text;
+
+	todo.save();
+
+	res.json(todo);
+};
+
+var getCompletedTodo = async (req, res) => {
+    const todo = await Todo.findById(req.params.id);
+
+	todo.complete = !todo.complete;
+
+	todo.save();
+
+	res.json(todo);
+};
+module.exports = { getAllTodos, createTodo , deleteTodo, updateTodo, getCompletedTodo};

@@ -1,11 +1,21 @@
 const mongoose = require("mongoose");
 const db = require("./index.js");
 
-const itemSchema = new mongoose.Schema({
-  description: String,
-  quantity: Number,
+const TodoSchema = new mongoose.Schema({
+  text: {
+		type: String,
+		required: true
+	},
+	complete: {
+		type: Boolean,
+		default: false
+	},
+	timestamp: {
+		type: String,
+		default: Date.now()
+	}
 });
 
-const Item = mongoose.model("Item", itemSchema);
+const Todo = mongoose.model("Item", TodoSchema);
 
-module.exports = Item;
+module.exports = Todo;
