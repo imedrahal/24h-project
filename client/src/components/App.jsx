@@ -1,14 +1,15 @@
 import 'regenerator-runtime/runtime'
 import React, { useEffect, useState } from 'react';
-import './index.css';
-// import axios from 'axios';
+// import './index.css';
+import Weather from "./Weather1.jsx"
 const api_base = 'http://localhost:3000';
 
 function App() {
 	const [todos, setTodos] = useState([]);
 	const [popupActive, setPopupActive] = useState(false);
 	const [newTodo, setNewTodo] = useState("");
-
+  const [view , setView]=useState(false)
+  
   useEffect(() => {
 		GetTodos();
 	},[]);
@@ -20,20 +21,20 @@ function App() {
 	};
 
  
-  const completeTodo = async id => {
-		const data = await fetch(api_base + '/todo/complete/' + id)
-		// console.log(data)
-		// const data =axios.get(api_base + '/todo/complete/:'+ id)
-		.then(res => res.json());
-		setTodos(todos => todos.map(todo => {
-			if (todo._id === data._id) {
-				todo.complete = data.complete;
-			};
+  // const completeTodo = async id => {
+	// 	const data = await fetch(api_base + '/todo/complete/' + id)
+	// 	// console.log(data)
+	// 	// const data =axios.get(api_base + '/todo/complete/:'+ id)
+	// 	.then(res => res.json());
+	// 	setTodos(todos => todos.map(todo => {
+	// 		if (todo._id === data._id) {
+	// 			todo.complete = data.complete;
+	// 		};
 
-			return todo;
-		}));
+	// 		return todo;
+	// 	}));
 		
-	}
+	// }
 
 	
 
@@ -52,9 +53,24 @@ function App() {
           setPopupActive(false);
 		      setNewTodo("");
           GetTodos()
+      };
+
+      const completeTodo = async id => {
+        const data = await fetch(api_base + '/todo/complete/' + id)
+        // console.log(data)
+        // const data =axios.get(api_base + '/todo/complete/:'+ id)
+        .then(res => res.json());
+        setTodos(todos => todos.map(todo => {
+          if (todo._id === data._id) {
+            todo.complete = data.complete;
+          };
+    
+          return todo;
+        }));
+        
       }
 	
-
+     
 
 	const deleteTodo = async id => {
 		const data = await (await fetch(api_base + '/todo/delete/' + id, { method: "DELETE" })).json()
@@ -62,15 +78,23 @@ function App() {
 		// .then(res => res.json());
 
 		setTodos(todos => todos.filter(todo => todo._id !== data.result._id));
+    GetTodos()
 	};
 
-
+   const changeView=()=>{
+     setView(!view)
+   }
 
 	return (
-		<div className="App">
-			<h1>Welcome, To your Todo List </h1>
-			<h4>Your tasks</h4>
-
+    <div className="App">
+  {view===false ? 
+  <div>
+  	<h1 className="change">Welcome, To your App </h1>
+			<h4 className="change"> Your tasks</h4>
+      <h2 className="changeView" onClick={changeView}> <a>Before, check the weather Weather </a></h2>
+<div className="">
+  <button onClick={()=> changeView} ></button>
+</div>
 			<div className="todos">
 				{todos.length >= 0 ? todos.map(todo => (
 					<div className={
@@ -80,7 +104,7 @@ function App() {
            >
 						<div className="checkbox"></div>
 
-						<div className="text">{todo.timestamp}  {todo.text}</div>
+						<div className="text">{todo.text} Created at: {todo.timestamp}</div>
 						
 
 						<div className="delete-todo" onClick={() => deleteTodo(todo._id)}>x</div>
@@ -102,6 +126,10 @@ function App() {
 					</div>
 				</div>
 			) : ''}
+      
+      </div>
+  : (<Weather  change={changeView}/>)}
+		
 		</div>
 	);
 }
